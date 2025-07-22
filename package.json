@@ -1,0 +1,37 @@
+{
+  "name": "abililife-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbiliLife/AbiliLife-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbiliLife/AbiliLife-backend/issues"
+  },
+  "homepage": "https://github.com/AbiliLife/AbiliLife-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.4.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.15",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
