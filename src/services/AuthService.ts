@@ -45,7 +45,7 @@ export class AuthService {
       const userRecord = await auth.createUser({
         email: userData.email,
         password: userData.password,
-        phone: userData.phone,
+        phoneNumber: userData.phone, // Might need to change key back to phone
         displayName: userData.fullName,
         emailVerified: false
       });
