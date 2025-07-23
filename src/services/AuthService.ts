@@ -171,7 +171,9 @@ export class AuthService {
       });
 
       // In production, send actual SMS here
-      console.log(`📱 OTP for ${otpData.phone}: ${otp}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📱 OTP for ${otpData.phone}: ${otp}`);
+      }
 
       return {
         success: true,
