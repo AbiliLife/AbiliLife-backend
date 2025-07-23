@@ -66,6 +66,17 @@ npm start
 
 The server will start on `http://localhost:3000`
 
+## 📚 API Documentation
+
+This project includes **Swagger/OpenAPI documentation** for all API endpoints.
+
+### Accessing the Documentation
+
+1. **Start the server**: `npm run dev` or `npm run docs`
+2. **Open your browser** and navigate to: `http://localhost:3000/api-docs`
+
+The Swagger UI provides interactive documentation with request/response examples, schema definitions, and try-it-out functionality.
+
 ## 📚 API Endpoints
 
 ### Authentication
@@ -78,15 +89,16 @@ The server will start on `http://localhost:3000`
 | POST | `/api/v1/auth/verify-otp` | Verify phone OTP |
 | GET | `/api/v1/auth/profile/:userId` | Get user profile |
 
-### Health Check
+### System
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/health` | Server health status |
+| GET | `/health` | Health check endpoint |
 
 ## 📝 API Usage Examples
 
 ### Register User
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/auth/signup \
   -H "Content-Type: application/json" \
@@ -99,6 +111,7 @@ curl -X POST http://localhost:3000/api/v1/auth/signup \
 ```
 
 ### Login User
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
@@ -108,31 +121,13 @@ curl -X POST http://localhost:3000/api/v1/auth/login \
   }'
 ```
 
-### Send OTP
-```bash
-curl -X POST http://localhost:3000/api/v1/auth/send-otp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "phone": "+254712345678"
-  }'
-```
-
-### Verify OTP
-```bash
-curl -X POST http://localhost:3000/api/v1/auth/verify-otp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "phone": "+254712345678",
-    "otp": "123456"
-  }'
-```
-
 ## 🏗 Project Structure
 
-```
+```text
 src/
 ├── config/
-│   └── firebase.ts          # Firebase configuration
+│   ├── firebase.ts          # Firebase configuration
+│   └── swagger.ts           # API documentation config
 ├── controllers/
 │   └── AuthController.ts    # Authentication logic
 ├── middleware/
