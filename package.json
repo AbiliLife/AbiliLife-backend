@@ -8,7 +8,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "docs": "echo \"📚 API Documentation available at: http://localhost:3000/api-docs\" && npm run dev"
   },
   "repository": {
     "type": "git",
@@ -25,12 +26,16 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^4.21.2",
-    "firebase-admin": "^13.4.0"
+    "firebase-admin": "^13.4.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.15",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }
