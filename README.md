@@ -185,4 +185,4 @@ The API uses consistent error responses:
 
 ## 📄 License
 
-This project is licensed under the ISC License.
+This project is licensed under the Apache License 2.0.
