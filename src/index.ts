@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { initializeFirebase } from './config/firebase';
+import { initializeFirebase, isFirebaseReady } from './config/firebase';
 import { setupSwagger } from './config/swagger';
 import authRoutes from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
@@ -30,7 +30,7 @@ app.use('/api/v1/auth', authRoutes);
  * @swagger
  * /health:
  *   get:
- *     summary: Health check endpoint
+ *     summary: Health check endpoint with Firebase status
  *     tags: [System]
  *     responses:
  *       200:
@@ -49,13 +49,32 @@ app.use('/api/v1/auth', authRoutes);
  *                 timestamp:
  *                   type: string
  *                   format: date-time
+ *                 environment:
+ *                   type: string
+ *                   example: "development"
+ *                 firebase:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       example: "connected"
+ *                     projectId:
+ *                       type: string
+ *                       example: "your-project-id"
  */
 // Health check endpoint
 app.get('/health', (req, res) => {
+  const firebaseStatus = isFirebaseReady();
+  
   res.status(200).json({
-    status: 'OK',
+    status: firebaseStatus ? 'OK' : 'DEGRADED',
     message: 'AbiliLife Backend is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    firebase: {
+      status: firebaseStatus ? 'connected' : 'disconnected',
+      projectId: process.env.FIREBASE_PROJECT_ID || 'not-configured'
+    }
   });
 });
 

@@ -1,5 +1,6 @@
 import { getAuth, getFirestore, isFirebaseReady } from '../config/firebase';
 import { User, CreateUserRequest, LoginRequest, OTPRequest, VerifyOTPRequest, AuthResponse } from '../models/User';
+import * as bcrypt from 'bcrypt';
 
 export class AuthService {
   private getAuthService() {
@@ -41,21 +42,25 @@ export class AuthService {
         };
       }
 
-      // Create user in Firebase Auth
+      // Hash password for secure storage
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+
+      // Create user in Firebase Auth (without password since we'll handle it separately)
       const userRecord = await auth.createUser({
         email: userData.email,
-        password: userData.password,
         phoneNumber: userData.phone, // Might need to change key back to phone
         displayName: userData.fullName,
         emailVerified: false
       });
 
-      // Create user document in Firestore
+      // Create user document in Firestore with hashed password
       const userDoc: Partial<User> = {
         uid: userRecord.uid,
         email: userData.email,
         phone: userData.phone,
         fullName: userData.fullName,
+        passwordHash: hashedPassword, // Store hashed password
         isPhoneVerified: false,
         isEmailVerified: false,
         createdAt: new Date(),
@@ -100,33 +105,51 @@ export class AuthService {
         };
       }
 
-      const auth = this.getAuthService();
       const firestore = this.getFirestoreService();
 
-      // Firebase Admin SDK doesn't have a direct way to verify email/password
-      // We'll need to use the client SDK for this or implement a workaround
-      // For now, we'll get the user by email and generate a custom token
-      const userRecord = await auth.getUserByEmail(loginData.email);
-      
-      if (!userRecord) {
+      // Get user document from Firestore by email
+      const userQuery = await firestore
+        .collection('users')
+        .where('email', '==', loginData.email)
+        .limit(1)
+        .get();
+
+      if (userQuery.empty) {
         return {
           success: false,
-          message: 'User not found'
+          message: 'Invalid email or password'
         };
       }
 
-      // Get user profile from Firestore
-      const userDoc = await firestore.collection('users').doc(userRecord.uid).get();
+      const userDoc = userQuery.docs[0];
       const userData = userDoc.data() as User;
 
-      // Generate custom token
-      const customToken = await auth.createCustomToken(userRecord.uid);
+      // Verify password using bcrypt
+      if (!userData.passwordHash) {
+        return {
+          success: false,
+          message: 'Invalid email or password'
+        };
+      }
+
+      const isPasswordValid = await bcrypt.compare(loginData.password, userData.passwordHash);
+      
+      if (!isPasswordValid) {
+        return {
+          success: false,
+          message: 'Invalid email or password'
+        };
+      }
+
+      // Generate custom token for authentication
+      const auth = this.getAuthService();
+      const customToken = await auth.createCustomToken(userData.uid);
 
       return {
         success: true,
         message: 'Login successful',
         user: {
-          uid: userRecord.uid,
+          uid: userData.uid,
           email: userData.email,
           fullName: userData.fullName,
           phone: userData.phone

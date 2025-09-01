@@ -3,6 +3,7 @@ export interface User {
   email: string;
   phone: string;
   fullName: string;
+  passwordHash?: string; // Optional for security - not included in responses
   isPhoneVerified: boolean;
   isEmailVerified: boolean;
   createdAt: Date;
