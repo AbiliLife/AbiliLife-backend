@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npm run clean && tsc",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf dist",
+    "build:clean": "npm run clean && tsc",
     "docs": "echo \"📚 API Documentation available at: http://localhost:3000/api-docs\" && npm run dev",
     "postinstall": "npm run build",
     "production": "NODE_ENV=production npm start"
