@@ -44,7 +44,7 @@
    Name: abililife-backend-api
    Region: Oregon (US West) or your preferred region
    Branch: main
-   Root Directory: abililife-backend-project
+   Root Directory: src
    ```
 
 2. **Runtime Configuration**
