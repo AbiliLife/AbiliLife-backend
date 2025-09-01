@@ -14,8 +14,8 @@ const options: swaggerJSDoc.Options = {
         url: 'https://github.com/AbiliLife/AbiliLife-backend',
       },
       license: {
-        name: 'ISC',
-        url: 'https://opensource.org/licenses/ISC',
+        name: 'Apache-2.0',
+        url: 'https://www.apache.org/licenses/LICENSE-2.0',
       },
     },
     servers: [
