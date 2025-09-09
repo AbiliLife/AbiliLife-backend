@@ -49,6 +49,13 @@ export interface OTPRequest {
   phone: string;
 }
 
+// NEW FOR TEMPORARY TESTING PURPOSES
+export interface OTPResponse {
+  success: boolean;
+  message: string;
+  otp?: string; // For testing purposes only; remove in production
+}
+
 export interface VerifyOTPRequest {
   phone: string;
   otp: string;

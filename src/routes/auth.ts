@@ -35,6 +35,12 @@ const authController = new AuthController();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/signup', authController.register);
 
@@ -69,6 +75,12 @@ router.post('/signup', authController.register);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/login', authController.login);
 
@@ -90,19 +102,15 @@ router.post('/login', authController.login);
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: "OTP sent successfully"
- *                 verificationId:
- *                   type: string
- *                   description: "Verification ID for OTP verification"
+ *               $ref: '#/components/schemas/OTPResponse'
  *       400:
  *         description: Bad request - invalid phone number
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -128,15 +136,28 @@ router.post('/send-otp', authController.sendOTP);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Phone number verified successfully"
  *       400:
- *         description: Bad request - invalid OTP or verification ID
+ *         description: Bad request - invalid OTP
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Unauthorized - OTP verification failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -180,6 +201,12 @@ router.post('/verify-otp', authController.verifyOTP);
  *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:

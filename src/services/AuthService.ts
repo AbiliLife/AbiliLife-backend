@@ -1,5 +1,5 @@
 import { getAuth, getFirestore, isFirebaseReady } from '../config/firebase';
-import { User, CreateUserRequest, LoginRequest, OTPRequest, VerifyOTPRequest, AuthResponse } from '../models/User';
+import { User, CreateUserRequest, LoginRequest, OTPRequest, VerifyOTPRequest, AuthResponse, OTPResponse } from '../models/User';
 import * as bcrypt from 'bcrypt';
 
 export class AuthService {
@@ -168,7 +168,7 @@ export class AuthService {
   /**
    * Send OTP to phone number
    */
-  async sendOTP(otpData: OTPRequest): Promise<AuthResponse> {
+  async sendOTP(otpData: OTPRequest): Promise<OTPResponse> {
     try {
       // Check if Firebase is ready
       if (!isFirebaseReady()) {
@@ -200,7 +200,8 @@ export class AuthService {
 
       return {
         success: true,
-        message: 'OTP sent successfully'
+        message: 'OTP sent successfully',
+        otp: otp // For testing purposes only; remove in production
       };
     } catch (error: any) {
       console.error('Error sending OTP:', error);

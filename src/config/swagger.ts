@@ -18,14 +18,24 @@ const options: swaggerJSDoc.Options = {
         url: 'https://www.apache.org/licenses/LICENSE-2.0',
       },
     },
+    tags: [
+      {
+        name: 'Authentication',
+        description: 'User authentication and registration endpoints',
+      },
+      {
+        name: 'Health',
+        description: 'API health check endpoints',
+      },
+    ],
     servers: [
       {
-        url: process.env.NODE_ENV === 'production' 
-          ? 'https://your-production-url.com' 
-          : `http://localhost:${process.env.PORT || 3000}`,
-        description: process.env.NODE_ENV === 'production' 
-          ? 'Production server' 
-          : 'Development server',
+        url: 'https://abililife-backend-api.onrender.com',
+        description: 'Production server',
+      },
+      {
+        url: 'http://localhost:3000',
+        description: 'Development server',
       },
     ],
     components: {
@@ -48,37 +58,45 @@ const options: swaggerJSDoc.Options = {
             uid: {
               type: 'string',
               description: 'Firebase User ID',
+              example: 'firebase-uid-123',
             },
             email: {
               type: 'string',
               format: 'email',
               description: 'User email address',
+              example: 'user@example.com',
             },
             phone: {
               type: 'string',
               description: 'User phone number',
+              example: '+1234567890',
             },
-            displayName: {
+            fullName: {
               type: 'string',
-              description: 'User display name',
+              description: 'User full name',
+              example: 'John Doe',
             },
-            photoURL: {
-              type: 'string',
-              format: 'uri',
-              description: 'User profile photo URL',
+            isPhoneVerified: {
+              type: 'boolean',
+              description: 'Whether phone number is verified',
+              example: false,
             },
-            emailVerified: {
+            isEmailVerified: {
               type: 'boolean',
               description: 'Whether email is verified',
-            },
-            disabled: {
-              type: 'boolean',
-              description: 'Whether user account is disabled',
+              example: false,
             },
             createdAt: {
               type: 'string',
               format: 'date-time',
               description: 'Account creation timestamp',
+              example: '2025-09-01T12:00:00.000Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Account last update timestamp',
+              example: '2025-09-01T12:00:00.000Z',
             },
           },
         },
@@ -87,30 +105,50 @@ const options: swaggerJSDoc.Options = {
           properties: {
             success: {
               type: 'boolean',
+              example: true,
             },
             message: {
               type: 'string',
+              example: 'User created successfully',
             },
             user: {
-              $ref: '#/components/schemas/User',
+              type: 'object',
+              properties: {
+                uid: {
+                  type: 'string',
+                  example: 'firebase-uid-123',
+                },
+                email: {
+                  type: 'string',
+                  example: 'user@example.com',
+                },
+                fullName: {
+                  type: 'string',
+                  example: 'John Doe',
+                },
+                phone: {
+                  type: 'string',
+                  example: '+1234567890',
+                },
+              },
             },
             token: {
               type: 'string',
-              description: 'Firebase custom token or ID token',
+              description: 'Firebase custom token for authentication',
+              example: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...',
             },
           },
         },
         ErrorResponse: {
           type: 'object',
           properties: {
-            error: {
-              type: 'string',
+            success: {
+              type: 'boolean',
+              example: false,
             },
             message: {
               type: 'string',
-            },
-            statusCode: {
-              type: 'integer',
+              example: 'Error message description',
             },
           },
         },
@@ -122,6 +160,24 @@ const options: swaggerJSDoc.Options = {
               type: 'string',
               description: 'Phone number in international format',
               example: '+1234567890',
+            },
+          },
+        },
+        OTPResponse: {
+          type: 'object',
+          properties: {
+            success: {
+              type: 'boolean',
+              example: true,
+            },
+            message: {
+              type: 'string',
+              example: 'OTP sent successfully',
+            },
+            otp: {
+              type: 'string',
+              description: 'OTP code sent to the user (for testing purposes)',
+              example: '123456',
             },
           },
         },
@@ -143,7 +199,7 @@ const options: swaggerJSDoc.Options = {
         },
         SignupRequest: {
           type: 'object',
-          required: ['email', 'password'],
+          required: ['email', 'password', 'fullName', 'phone'],
           properties: {
             email: {
               type: 'string',
@@ -157,9 +213,9 @@ const options: swaggerJSDoc.Options = {
               description: 'User password (minimum 6 characters)',
               example: 'password123',
             },
-            displayName: {
+            fullName: {
               type: 'string',
-              description: 'User display name',
+              description: 'User full name',
               example: 'John Doe',
             },
             phone: {
@@ -196,14 +252,12 @@ const options: swaggerJSDoc.Options = {
   ],
 };
 
-const specs = swaggerJSDoc(options);
-
 export const setupSwagger = (app: Application): void => {
+  const specs = swaggerJSDoc(options);
+  
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
     explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'AbiliLife API Documentation',
   }));
 };
-
-export { specs };
