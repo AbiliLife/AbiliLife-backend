@@ -1,8 +1,11 @@
 import { getAuth, getFirestore, isFirebaseReady } from '../config/firebase';
 import { User, CreateUserRequest, LoginRequest, OTPRequest, VerifyOTPRequest, AuthResponse, OTPResponse } from '../models/User';
 import * as bcrypt from 'bcrypt';
+import { FCMService } from './FCMService';
 
 export class AuthService {
+  private fcmService = new FCMService();
+
   private getAuthService() {
     if (!isFirebaseReady()) {
       throw new Error('Firebase is not configured. Please set up Firebase first.');
@@ -170,7 +173,6 @@ export class AuthService {
    */
   async sendOTP(otpData: OTPRequest): Promise<OTPResponse> {
     try {
-      // Check if Firebase is ready
       if (!isFirebaseReady()) {
         return {
           success: false,
@@ -180,11 +182,10 @@ export class AuthService {
 
       const firestore = this.getFirestoreService();
 
-      // In a real implementation, you would integrate with an SMS service
-      // For now, we'll simulate OTP generation
+      // 1. Generate OTP
       const otp = this.generateOTP();
       
-      // Store OTP in Firestore with expiration
+      // 2. Store OTP in Firestore with expiration
       await firestore.collection('otps').doc(otpData.phone).set({
         otp: otp,
         phone: otpData.phone,
@@ -193,21 +194,58 @@ export class AuthService {
         createdAt: new Date()
       });
 
-      // In production, send actual SMS here
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📱 OTP for ${otpData.phone}: ${otp}`);
+      // 3. Send OTP via FCM notification (if user exists and has FCM token)
+      const userQuery = await firestore.collection('users')
+        .where('phone', '==', otpData.phone)
+        .limit(1)
+        .get();
+
+      if (!userQuery.empty) {
+        const userData = userQuery.docs[0].data();
+        const fcmTokens = userData.fcmTokens || [];
+        
+        if (fcmTokens.length > 0) {
+          // Send to first available FCM token (simplified - one device per user)
+          const fcmResult = await this.fcmService.sendOTPPushNotification(fcmTokens[0], otp, otpData.phone);
+          
+          if (fcmResult.success) {
+            return {
+              success: true,
+              message: 'OTP sent via push notification',
+              // Only return OTP in development for testing
+              ...(process.env.NODE_ENV === 'development' && { otp })
+            };
+          } else {
+            console.log('(sendOTP backend) ⚠️ FCM notification failed:', fcmResult.error);
+          }
+        } else {
+          console.log('(sendOTP backend) ⚠️ No FCM tokens found for user:', otpData.phone);
+        }
+      } else {
+        console.log('(sendOTP backend) ⚠️ No user found with phone:', otpData.phone, '(might be new user)');
       }
 
-      return {
-        success: true,
-        message: 'OTP sent successfully',
-        otp: otp // For testing purposes only; remove in production
-      };
-    } catch (error: any) {
-      console.error('Error sending OTP:', error);
+      // Fallback for development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📱 OTP for development (${otpData.phone}): ${otp}`);
+        return {
+          success: true,
+          message: 'OTP generated (check console - development mode)',
+          otp: otp
+        };
+      }
+
+      // Production fallback when FCM fails
       return {
         success: false,
-        message: 'Failed to send OTP'
+        message: 'Unable to deliver OTP. Please ensure you have the app installed and notifications enabled.'
+      };
+
+    } catch (error: any) {
+      console.error('(sendOTP backend) ❌ Error in sendOTP:', error);
+      return {
+        success: false,
+        message: error.message || 'Failed to send OTP'
       };
     }
   }

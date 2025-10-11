@@ -57,6 +57,14 @@ export const initializeFirebase = () => {
   }
 };
 
+
+export const getFirebaseAdmin = () => {
+  if (!isFirebaseInitialized) {
+    throw new Error('Firebase is not initialized. Please configure Firebase first.');
+  }
+  return admin;
+};
+
 export const getAuth = (): admin.auth.Auth => {
   if (!isFirebaseInitialized) {
     throw new Error('Firebase is not initialized. Please configure Firebase first.');
@@ -69,6 +77,13 @@ export const getFirestore = () => {
     throw new Error('Firebase is not initialized. Please configure Firebase first.');
   }
   return admin.firestore();
+};
+
+export const getFirebaseMessaging = (): admin.messaging.Messaging => {
+  if (!isFirebaseInitialized) {
+    throw new Error('Firebase is not initialized. Please configure Firebase first.');
+  }
+  return admin.messaging();
 };
 
 export const isFirebaseReady = () => isFirebaseInitialized;
