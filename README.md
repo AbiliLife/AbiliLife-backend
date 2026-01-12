@@ -2,13 +2,15 @@
 
 The backend API for the AbiliLife super app, built with Node.js, Express, TypeScript, and Firebase.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Language**: TypeScript
 - **Database**: Firebase Firestore
 - **Authentication**: Firebase Auth
+- **Messaging**: Firebase Cloud Messaging
+- **API Documentation**: Swagger/OpenAPI
 - **Real-time**: Firebase (for future features)
 
 ## 📋 Prerequisites
@@ -17,7 +19,7 @@ The backend API for the AbiliLife super app, built with Node.js, Express, TypeSc
 - npm or yarn
 - Firebase project (instructions below)
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone and Install Dependencies
 
@@ -31,7 +33,7 @@ npm install
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Create a new project or select existing one
-3. Enable Authentication and Firestore Database
+3. Enable Authentication, Firestore Database, and Cloud Messaging
 4. Go to Project Settings > Service Accounts
 5. Generate a new private key and download the JSON file
 6. Save it as `firebase-service-account.json` in the project root
@@ -88,6 +90,8 @@ The Swagger UI provides interactive documentation with request/response examples
 | POST | `/api/v1/auth/send-otp` | Send OTP to phone |
 | POST | `/api/v1/auth/verify-otp` | Verify phone OTP |
 | GET | `/api/v1/auth/profile/:userId` | Get user profile |
+| POST | `/api/v1/auth/fcm-token` | Store FCM token for user |
+| POST | `/api/v1/auth/fcm-test` | Test FCM notification sending |
 
 ### System
 
@@ -95,7 +99,7 @@ The Swagger UI provides interactive documentation with request/response examples
 |--------|----------|-------------|
 | GET | `/health` | Health check endpoint |
 
-## 📝 API Usage Examples
+## API Usage Examples
 
 ### Register User
 
@@ -129,7 +133,8 @@ src/
 │   ├── firebase.ts          # Firebase configuration
 │   └── swagger.ts           # API documentation config
 ├── controllers/
-│   └── AuthController.ts    # Authentication logic
+│   ├── AuthController.ts    # Authentication logic
+│   └── FCMController.ts     # FCM token & notification management
 ├── middleware/
 │   └── errorHandler.ts      # Error handling
 ├── models/
@@ -137,7 +142,8 @@ src/
 ├── routes/
 │   └── auth.ts             # Authentication routes
 ├── services/
-│   └── AuthService.ts      # Business logic
+│   ├── AuthService.ts      # Authentication business logic
+│   └── FCMService.ts       # Firebase Cloud Messaging service
 └── index.ts                # Main server file
 ```
 
@@ -164,9 +170,10 @@ The API uses consistent error responses:
 }
 ```
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - [ ] JWT-based authentication middleware
+- [ ] Google OAuth integration
 - [ ] Rate limiting for API endpoints
 - [ ] SMS integration for real OTP sending
 - [ ] Mobility service endpoints (rides, routes)
