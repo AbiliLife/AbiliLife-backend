@@ -173,7 +173,7 @@ export class AuthController {
       // For now, we'll expect it in the request parameters
       const { userId } = req.params;
 
-      if (!userId) {
+      if (!userId || Array.isArray(userId)) {
         res.status(400).json({
           success: false,
           message: 'User ID is required'
