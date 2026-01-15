@@ -11,7 +11,7 @@ const options: swaggerJSDoc.Options = {
       description: 'API documentation for AbiliLife Backend application',
       contact: {
         name: 'AbiliLife Team',
-        url: 'https://github.com/AbiliLife/AbiliLife-backend',
+        url: 'https://abililife.co.ke',
       },
       license: {
         name: 'Apache-2.0',
